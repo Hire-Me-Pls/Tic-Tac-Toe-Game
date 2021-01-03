@@ -1,0 +1,49 @@
+import requests
+#In order to request the web page into Python
+
+from bs4 import BeautifulSoup 
+#Parsing the html on the website into readable data in Python
+
+#Web Scraping program
+#Get webpage info
+
+def web_scrape():
+    url = 'https://www.indeed.com/jobs?q=Software+Engineer&l=NorthCarolina'
+    #Set which website to read from, can change location and title in url
+    
+    page = requests.get(url)
+    #Use requests to get url
+
+    soup = BeautifulSoup(page.content,'html.parser')
+    #parse website so it is readable
+
+    results = soup.find(id='resultsBodyContent')
+    #Find class ID that has the content you are looking for
+    #By inspecting web page via right click
+    
+    print(results.prettify())
+    #.prettify() cleans up the text to be more readable
+
+    jobs = results.find_all('div','jobsearch-SerpJobCard')
+    #Inspect webpage to find content that shows results
+    #element div and the class jobsearch-SerpJobCard will show results of all the jobs posted
+    
+    for job in jobs:
+        title_el = job.find('h2', class_='title')
+        #h2 is element in webpage source that specifies titles you are searching
+        
+        company_el = job.find('div',class_='sjcl')
+        #div is element in webpage source that specifies the company name and job location
+        #Different websites may or may not use different elements and different classes
+        
+        #Get rid of None Error
+        if None in (title_el,company_el):
+            continue
+            
+        print(title_el.text.strip())
+        print(company_el.text.strip())
+        print()
+        #Get rid of all the extra spaces by stripping text
+        
+
+web_scrape()
