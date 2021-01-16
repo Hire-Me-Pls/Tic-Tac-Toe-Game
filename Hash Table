@@ -1,0 +1,69 @@
+class HashTable:
+
+    def __init__(self,size=20):
+        self.table_size = size
+        self.table = [None] * size
+        self.count = 0
+
+    def __str__(self):
+        return str(self.table)
+
+    def resize_table(self):
+        #Copy old table list
+        #Initialize self.table = a new list that's bigger (2x size) and empty
+        #Re-put all old values in copy back into hash
+
+        pass
+        
+    def put(self, value):
+        #Check load factor, will table exceed acceptable Load factor?
+        #Load factor = 0.66
+        #Load factor = # items in table / number of slots
+        load_factor = self.count / len(self.table)
+        if load_factor + 1 > 0.66:
+            self.resize_table()
+        
+        self.count += 1
+        index = self.hash(value)
+        if self.table[index] == None or self.table[index] == value:
+            #slot empty, save value
+            self.table[index] = value
+        else:
+            # hash collision
+            print("Hash collision!")
+            i = 1
+            done = False
+            while not done:
+                #linear probe: index + i, i increments till find empty slot
+                new_index = (index + i) % len(self.table)
+                if new_index == index:
+                    raise ValueError("Hash table is full!")
+                if self.table[new_index] == None or self.table[new_index] == value:
+                    self.table[new_index] = value
+                    done = True
+                else:
+                    i += 1
+                
+                
+    def get(self, value):
+        index = self.hash(value)
+        if self.table[index] == value or self.table[index] is None:
+            return self.table[index]
+        else:
+            #Need to probe in order to be sure that value is NOT in hash table
+            print("Oops! Value not what expected!")
+
+    def hash(self, value):
+        return value % len(self.table)
+    
+
+if __name__ == '__main__':
+    ht = HashTable()
+    ht.put(2)
+    ht.put(22)
+    ht.put(4)
+    ht.put(42)
+    ht.put(19)
+    ht.put(39)
+    print(ht)
+
