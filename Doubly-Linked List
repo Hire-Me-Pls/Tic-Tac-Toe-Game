@@ -1,0 +1,249 @@
+class Node:
+    """
+    A class representing a Node in your linked list.
+    """
+    def __init__(self, data=None, next=None, prev=None):
+        """
+        :param data: the data item to hold in the node. Defaults to None
+        :param next: a reference to the next node. Defaults to None
+        :param prev: a reference to the previous node. Defaults to None
+        """
+        self.data = data
+        self.next = next
+        self.prev = prev
+
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        return f"Node(data={str(self.data)})"
+
+
+class DoublyLinkedList:
+
+    def __init__(self):
+        """
+     
+
+        The self.head variable must always point to the first item in the list.
+        The self.tail variable must always point to the last item in the list.
+        self.size should contain an up-to-date count of the number of nodes in the list.
+
+        """
+        self.head = None
+        self.tail = None
+        self.size = 0
+
+    def __iter__(self):
+        """
+        It allows you to iterate over the list with a for-loop. For example:
+
+        x = DoublyLinkedList()
+        x.add('Alice')
+        x.add('Bob')
+        for i in x:
+            print(x)
+        """
+        current = self.head
+        while current is not None:
+            yield current
+            current = current.next
+
+    def add(self, item):
+        """
+        adds item to the beginning (head) of the list. This method does not return anything.
+        This method must have a O(1) implementation.
+        :param item: the data item to add to the beginning of the list
+        """
+        newnode = Node(item, self.head)
+        if not self.head:
+            # List is empty
+            self.head = self.tail = newnode
+        else:
+            # tell the old head's .prev to point to the new head
+            self.head.prev = newnode
+            self.head = newnode
+        self.size += 1
+
+    def __len__(self):
+        """
+        :return: the number of items in the list
+        """
+        return self.size
+
+    def search(self, item):
+        """
+        Search for an item in the list.
+        :param item: the item to search for.
+        :return: True if the item is in the list, False otherwise.
+        """
+        # This code is the same for a singly Linked List
+        curr = self.head
+        while curr is not None:
+            if curr.data == item:
+                return True
+            else:
+                curr = curr.next
+
+        return False
+
+    def append(self, item):
+        """
+        appends the item to the end (tail) of the list. This method does not return anything.
+        This method must have a O(1) implementation.
+        :param item: the item to append to the end of the list
+        """
+
+        if self.head is None:
+            # List is empty
+            self.tail = self.head = Node(item)
+        else:
+            # Create a new node, make it's .prev point to the old tail, and tell the old tail .next to point to it
+            new_node = Node(item)
+            new_node.prev = self.tail
+            self.tail.next = new_node
+            # You can replace the previous three lines with the following one to do it in one line.
+            # self.tail.next = Node(item, next=None, prev=self.tail)
+            self.tail = new_node
+        self.size += 1
+
+    def remove(self, item):
+        """
+        Removes the first item from the list whose value is equal to item. This method does not return anything.
+        Raise a ValueError if there is no such item in the list.
+        :param item: the item to search for.
+        """
+
+        curr = self.head
+        prev = None
+
+        while curr is not None and curr.data != item:
+            prev = curr
+            curr = curr.next
+
+        if curr is None:                # item wasn't found or list is empty
+            raise ValueError
+
+        if prev is None:                # item is the head
+            if self.tail == self.head:  # one item in the list
+                self.head = self.tail = None
+            else:
+                self.head = curr.next
+                self.head.prev = None   # You have a new head. But the head's .prev must always be None in a DLL
+        elif curr == self.tail:         # Item is the tail
+            self.tail = prev
+            self.tail.next = None
+        else:                           # item is in the middle
+            prev.next = curr.next       # curr is the node to be deleted, so curr.next is the node after it
+            curr.next.prev = prev       # curr.next is the node after the one deleting. So set it's .prev to point to the node before it.
+        self.size -= 1
+
+
+    def pop(self, pos=None):
+        """
+        Removes the node at position pos and returns the Node's data. Calling pop() without an argument will result
+        in pos=None, in which case remove and return the item at the end of the list.
+
+        pop(0) and pop() calls must be O(1)
+
+        Raise an IndexError if the list is empty, or if pos is not in the range [0, len(list)-1].
+        Raise a TypeError if pos is not an integer.
+
+        :param pos: the position (index) of the item to be popped
+        :return: the data item in the node
+        """
+
+        if self.size == 0:
+            raise IndexError
+
+        if pos and type(pos) != int:
+            raise TypeError
+
+        if pos and (pos < 0 or pos >= self.size):
+            raise IndexError
+
+        # pop() calls must be O(1). Here we take advantage of the tail and .prev to make popping the tail O(1)
+        # This if-block handles that special case. We are done after this if-block if popping the tail.
+        if pos is None or pos == len(self) - 1:
+            result = self.tail.data
+            if self.tail == self.head:
+                self.head = self.tail = None
+            else:
+                self.tail = self.tail.prev
+                self.tail.next = None
+        else:
+            # Walk the list to find the thing to pop as in the singly linked list.
+            index = 0
+            curr = self.head
+            prev = None
+            while index != pos:
+                prev = curr
+                curr = curr.next
+                index += 1
+
+            result = curr.data
+
+            # Remove code is the same as in remove() method for DLL.
+            if prev is None:                # item is the head
+                if self.tail == self.head:  # one item in the list
+                    self.head = self.tail = None
+                else:
+                    self.head = curr.next
+                    self.head.prev = None
+            elif curr == self.tail:         # Item is the tail
+                self.tail = prev
+                self.tail.next = None
+            else:                           # item is in the middle
+                prev.next = curr.next
+                prev.next.prev = prev
+
+        self.size -= 1
+        return result
+
+    def reverse(self):
+        temp = None
+        self.tail = self.head
+        current = self.head
+
+        while current is not None:
+            temp = current.prev
+            current.prev = current.next
+            current.next = temp
+            current = current.prev
+
+        if temp is not None:
+            self.head = temp.prev
+
+    def __reversed__(self):
+        """
+        This method allows you to iterate over the list backward with a for-loop.
+        """
+        current = self.tail
+        while current is not None:
+            yield current
+            current = current.prev
+
+
+if __name__ == "__main__":
+    from linked_list_test import TestSuite
+    import sys
+
+    suite = TestSuite(sys.modules[__name__], "DoublyLinkedList")
+    suite.test_add()
+    suite.test_doubly_linked_list_add()   # tests particular to the doubly linked list
+    suite.test_search()
+    suite.test_append()
+    suite.test_doubly_linked_list_append()  # tests particular to the doubly linked list
+    suite.test_remove()
+    suite.test_doubly_linked_list_remove() # tests particular to the doubly linked list
+    suite.test_pop_empty_list()
+    suite.test_pop_bad_argument()
+    suite.test_pop_list_length_1()
+    suite.test_pop_multiple_items()
+    suite.test_doubly_linked_list_pop() # tests particular to the doubly linked list
+
+    # Extra credit tests
+    # suite.test_extra_credit_getitem()
+    # suite.test_extra_credit_setitem()
+    # suite.test_extra_credit_delitem()
+    suite.test_extra_credit_reverse()
