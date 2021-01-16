@@ -1,0 +1,47 @@
+import random
+
+print(format("Welcome to Rock, Paper, Scissors",' <20')) ##Format heading
+print()
+word_list = ['Rock','Paper','Scissors'] #Initalize word bank to generate for computer
+done = False
+while done != True: #Continue to play as long as you want
+    Player1 = input("Player 1, enter choice(Rock, Paper, Scissors): ")
+    Player2 = random.choice(word_list)
+
+    print()
+    print('Player 2 chose: ',Player2)
+    print()
+
+    Player1 = Player1.lower()
+    Player2 = Player2.lower()
+
+    if Player1 == Player2:
+        print("The game is a draw")
+
+    elif Player1 == 'rock':
+        if Player2 == 'paper':
+            print("Player 2 wins")
+        elif Player2 == 'scissors':
+            print('Player 1 wins')
+
+    elif Player1 == 'paper':
+        if Player2 == 'rock':
+            print('Player 1 wins')
+        elif Player2 == 'scissors':
+            print("Player 2 wins")
+
+    elif Player1 == 'scissors':
+        if Player2 == 'rock':
+            print('Player 2 wins')
+        elif Player2 == 'paper':
+            print('Print Player 1 wins')
+    print()
+    playAgain = input("Play again? (y/n): ")
+    
+    if playAgain.lower == 'y':
+        done = False
+    else:
+        done = True
+
+
+
