@@ -1,8 +1,4 @@
-# ==========================================================================
-# PROGRAM:... ....... Assignment 11
-# COURSE:............ CSC 231
-# TERM:.............. Fall 2020
-# ==========================================================================
+
 
 
 class TreeNode:
@@ -325,15 +321,6 @@ class TreeMap:
             return curr.key
         except:
             raise ValueError
-
-    def traverse_levelorder(self):
-        """
-        EXTRA CREDIT:
-        Perform a level-order traversal of the TreeMap to print each TreeNode. Do not print anything if the TreeMap is empty.
-
-        Starting with the root, level-order order traversal goes level-by-level, left-to-right.
-        """
-        raise NotImplementedError
 
 
 def main():
